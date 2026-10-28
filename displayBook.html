@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Records</title>
+</head>
+
+<body>
+
+    <h1>Book Records</h1>
+
+    <label for="bookTitle">Select a book:</label>
+
+    <select id="bookTitle">
+        <option value="">-- Select a Book --</option>
+    </select>
+
+    <h2>Book Details</h2>
+
+    <p id="title">Title: </p>
+    <p id="author">Author: </p>
+    <p id="year">Publication Year: </p>
+    <p id="genres">Genres: </p>
+
+    <script>
+
+        // Fetch book data from GitHub
+        fetch("https://raw.githubusercontent.com/naimfarhan/lab06-json/refs/heads/main/books.json")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch book data");
+                }
+
+                return response.json();
+            })
+
+            .then(data => {
+
+                const books = data.Books;
+
+                const bookSelect = document.getElementById("bookTitle");
+
+                // Add book titles to the dropdown
+                books.forEach((book, index) => {
+
+                    const option = document.createElement("option");
+
+                    option.value = index;
+                    option.textContent = book.title;
+
+                    bookSelect.appendChild(option);
+
+                });
+
+                // Display selected book details
+                bookSelect.addEventListener("change", function () {
+
+                    const selectedIndex = this.value;
+
+                    if (selectedIndex === "") {
+
+                        document.getElementById("title").textContent = "Title: ";
+                        document.getElementById("author").textContent = "Author: ";
+                        document.getElementById("year").textContent = "Publication Year: ";
+                        document.getElementById("genres").textContent = "Genres: ";
+
+                        return;
+                    }
+
+                    const selectedBook = books[selectedIndex];
+
+                    document.getElementById("title").textContent =
+                        "Title: " + selectedBook.title;
+
+                    document.getElementById("author").textContent =
+                        "Author: " + selectedBook.author;
+
+                    document.getElementById("year").textContent =
+                        "Publication Year: " + selectedBook.publicationYear;
+
+                    document.getElementById("genres").textContent =
+                        "Genres: " + selectedBook.genres.join(", ");
+
+                });
+
+            })
+
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("title").textContent =
+                    "Unable to load book records. Please check the JSON URL.";
+            });
+
+    </script>
+
+</body>
+</html>
